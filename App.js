@@ -5,6 +5,7 @@ const User = require('./Usermodule');
 const cors = require('cors');
 const multer = require('multer');
 const TimeEntry = require('./TimeEntry')
+const AdminMessage = require('./AdminMessage')
 const path = require('path'); 
 const app = express();
 app.use(bodyParser.json());
@@ -113,6 +114,26 @@ app.get('/timesheet/:userId/latest-entry', async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch latest time entry', error });
+    }
+});
+
+
+app.post('/admin/message', async (req, res) => {
+    try {
+        const { message } = req.body;
+        const adminMessage = await AdminMessage.create({ message });
+        res.status(201).json({ message: 'Admin message stored successfully', adminMessage });
+    } catch (error) {
+        res.status(400).json({ message: 'Failed to store admin message', error });
+    }
+});
+
+app.get('/admin/message/latest', async (req, res) => {
+    try {
+        const latestMessage = await AdminMessage.findOne().sort({ createdAt: -1 });
+        res.status(200).json(latestMessage);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch latest admin message', error });
     }
 });
 
