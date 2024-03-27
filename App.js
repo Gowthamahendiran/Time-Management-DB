@@ -32,8 +32,8 @@ mongoose.connect("mongodb+srv://gowthamahendiran:rmrh7LWA7oZMz31I@tronlogix-time
 
 app.post('/signup', upload.single('profileImage'), async (req, res) => {
     try {
-      const { name, email, password, employeeId, role } = req.body;
-      const user = await User.create({ name, email, password, employeeId, role, profileImage: req.file.path });
+      const { name, email, password, employeeId, role , category } = req.body;
+      const user = await User.create({ name, email, password, employeeId, role, profileImage: req.file.path , category });
       res.status(201).json({ message: 'User created successfully', user });
     } catch (error) {
       res.status(400).json({ message: 'Signup failed', error });

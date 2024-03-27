@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     employeeId: String,
     role: String,
     profileImage: { type: String, required: true },
+    category : String,
 });
 
 const User = mongoose.model('User', userSchema);
