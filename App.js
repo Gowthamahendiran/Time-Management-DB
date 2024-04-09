@@ -7,6 +7,7 @@ const multer = require('multer');
 const TimeEntry = require('./TimeEntry')
 const AdminMessage = require('./AdminMessage')
 const path = require('path'); 
+const LeaveRequest = require('./LeaveRequest'); 
 const app = express();
 app.use(bodyParser.json());
 
@@ -157,6 +158,52 @@ app.get('/admin/message/latest', async (req, res) => {
     }
 });
 
+app.post('/leave-request', async (req, res) => {
+    try {
+        const { name, email, fromDate, toDate, totalDays, reasonLeave, message } = req.body;
+        const leaveRequest = await LeaveRequest.create({ name, email, fromDate, toDate, totalDays, reasonLeave, message });
+        res.status(201).json({ message: 'Leave request stored successfully', leaveRequest });
+    } catch (error) {
+        res.status(400).json({ message: 'Failed to store leave request', error });
+    }
+});
+
+app.get('/leave-history/:email', async (req, res) => {
+    try {
+      const email = req.params.email;
+      const leaveHistory = await LeaveRequest.find({ email });
+      res.status(200).json(leaveHistory);
+    } catch (error) {
+      console.error("Error fetching leave history:", error);
+      res.status(500).json({ message: 'Failed to fetch leave history' });
+    }
+  });
+
+  app.get('/admin/leave-requests', async (req, res) => {
+    try {
+        const allLeaveRequests = await LeaveRequest.find();
+        res.status(200).json(allLeaveRequests);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch leave requests', error });
+    }
+});
+
+app.put('/admin/leave-requests/:id', async (req, res) => {
+    try {
+        const requestId = req.params.id;
+        const { status, AdminLeaveMessage } = req.body; 
+
+        const leaveRequest = await LeaveRequest.findByIdAndUpdate(requestId, { status, AdminLeaveMessage }, { new: true });
+
+        if (!leaveRequest) {
+            return res.status(404).json({ message: 'Leave request not found' });
+        }
+
+        res.status(200).json({ message: 'Leave request updated successfully', leaveRequest });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update leave request', error });
+    }
+});
 
 app.listen(3000, () => {
     console.log('Server running on port 3000');
