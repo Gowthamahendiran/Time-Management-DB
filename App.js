@@ -191,9 +191,9 @@ app.get('/leave-history/:email', async (req, res) => {
 app.put('/admin/leave-requests/:id', async (req, res) => {
     try {
         const requestId = req.params.id;
-        const { status, AdminLeaveMessage } = req.body; 
-
-        const leaveRequest = await LeaveRequest.findByIdAndUpdate(requestId, { status, AdminLeaveMessage }, { new: true });
+        const { status, AdminLeaveMessage, adminName } = req.body; 
+        console.log("Admin name:", adminName); 
+        const leaveRequest = await LeaveRequest.findByIdAndUpdate(requestId, { status, AdminLeaveMessage, approvedBy: adminName }, { new: true });
 
         if (!leaveRequest) {
             return res.status(404).json({ message: 'Leave request not found' });

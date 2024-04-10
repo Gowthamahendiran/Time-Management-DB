@@ -11,6 +11,7 @@ const leaveRequestSchema = new mongoose.Schema({
     message: String,
     status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
     AdminLeaveMessage: String, 
+    approvedBy: String, 
 
 });
 
