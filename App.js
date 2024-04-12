@@ -54,6 +54,24 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.put('/update-password/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const { newPassword } = req.body;
+
+        const user = await User.findByIdAndUpdate(userId, { password: newPassword }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update password', error });
+    }
+});
+
+
 app.get('/employees', async (req, res) => {
     try {
         const employees = await User.find({});
@@ -204,6 +222,22 @@ app.put('/admin/leave-requests/:id', async (req, res) => {
         res.status(500).json({ message: 'Failed to update leave request', error });
     }
 });
+
+
+app.get('/admin/leave-requests/:id', async (req, res) => {
+    try {
+        const requestId = req.params.id;
+        const leaveRequest = await LeaveRequest.findById(requestId);
+        if (!leaveRequest) {
+            return res.status(404).json({ message: 'Leave request not found' });
+        }
+        res.status(200).json(leaveRequest);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch leave request', error });
+    }
+});
+
+
 
 app.listen(3000, () => {
     console.log('Server running on port 3000');
