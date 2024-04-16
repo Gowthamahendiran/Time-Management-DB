@@ -72,6 +72,19 @@ app.put('/update-password/:userId', async (req, res) => {
 });
 
 
+// Assuming you have an endpoint for recent time entries
+app.get('/recent-time-entries', async (req, res) => {
+    try {
+        const recentEntries = await TimeEntry.find({}).populate('userId', 'name category');
+        // Filter entries by user category (e.g., "User")
+        const userEntries = recentEntries.filter(entry => entry.userId.category === "User");
+        res.status(200).json(userEntries);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch recent time entries', error });
+    }
+});
+
+
 app.get('/employees', async (req, res) => {
     try {
         const employees = await User.find({});
@@ -224,6 +237,7 @@ app.put('/admin/leave-requests/:id', async (req, res) => {
 });
 
 
+
 app.get('/admin/leave-requests/:id', async (req, res) => {
     try {
         const requestId = req.params.id;
@@ -236,7 +250,6 @@ app.get('/admin/leave-requests/:id', async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch leave request', error });
     }
 });
-
 
 
 app.listen(3000, () => {
